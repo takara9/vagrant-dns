@@ -8,6 +8,7 @@ Vagrant.configure("2") do |config|
     machine.vm.box = "generic/centos8"
     machine.vm.hostname = 'server1'
     machine.vm.network "private_network", ip: "172.20.1.250"
+    #machine.vm.network "public_network",  ip: "192.168.1.250", bridge: "en0: Ethernet"
     machine.vm.provider "virtualbox" do |vbox|
       vbox.gui = false        
       vbox.cpus = 1

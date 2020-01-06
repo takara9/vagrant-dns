@@ -5,10 +5,10 @@ CentOS8でDNSサーバーを構築するVagrant + Ansible playbookです。
 ## 起動方法
 
 ~~~
-
-
+$ git clone https://github.com/takara9/vagrant-dns
+$ cd vagrant-dns
+$ vagrant up
 ~~~
-
 
 DNSの設定ファイルは、playbook/bind/vars/main.yml です。
 
@@ -129,3 +129,22 @@ Address: 172.217.31.131
 ~~~
 
 ## ドメインの逆引き
+
+~~~
+maho:vagrant-dns maho$ nslookup 
+> server 172.20.1.250
+Default server: 172.20.1.250
+Address: 172.20.1.250#53
+> w1.takara9.org
+Server:		172.20.1.250
+Address:	172.20.1.250#53
+
+Name:	w1.takara9.org
+Address: 172.20.1.100
+> 172.20.1.100
+Server:		172.20.1.250
+Address:	172.20.1.250#53
+
+100.1.20.172.in-addr.arpa	name = w1.takara9.org.
+> 
+~~~

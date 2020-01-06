@@ -106,32 +106,26 @@ Jan 06 13:33:15 server1.takara9.org named[6233]: resolver priming query complete
 ## ドメインの正引き
 
 独自のドメインと、インターネット上のドメインの両方をひく事ができる
+仮想サーバーのIPアドレスを指定することで、DNS名のIPアドレスを解決できる。
 
 ~~~
-[root@server1 vagrant]# nslookup
+maho:vagrant-dns maho$ nslookup 
+> server 172.20.1.250
+Default server: 172.20.1.250
+Address: 172.20.1.250#53
 > w1.takara9.org
-Server:		127.0.0.1
-Address:	127.0.0.1#53
+Server:		172.20.1.250
+Address:	172.20.1.250#53
 
 Name:	w1.takara9.org
 Address: 172.20.1.100
-> w2.takara9.org
-Server:		127.0.0.1
-Address:	127.0.0.1#53
-
-Name:	w2.takara9.org
-Address: 172.20.1.101
 > www.google.co.jp
-Server:		127.0.0.1
-Address:	127.0.0.1#53
+Server:		172.20.1.250
+Address:	172.20.1.250#53
 
 Non-authoritative answer:
 Name:	www.google.co.jp
-Address: 172.217.161.35
-Name:	www.google.co.jp
-Address: 2404:6800:4004:808::2003
+Address: 172.217.31.131
 ~~~
 
-
-
-
+## ドメインの逆引き

@@ -1,0 +1,8 @@
+server1    ansible_connection=local
+
+[centos]
+172.20.1.250
+
+[centos:vars]
+ansible_user=root
+ansible_password=p@ssw0rd

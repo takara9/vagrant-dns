@@ -1,0 +1,17 @@
+zone "{{ domain }}" IN {
+    type master;
+    file "/etc/named/zones/db.{{ domain }}";
+    allow-update { key rndc-key; };
+};
+
+zone "{{ reverse_domain }}" IN {
+    type master;
+    file "/etc/named/zones/db.{{ reverse_domain }}";
+    allow-update {key rndc-key; };
+};
+
+controls {
+     inet 127.0.0.1 port 953
+         allow { 127.0.0.1; } keys { "rndc-key"; };
+};
+

@@ -1,0 +1,96 @@
+#tasks file for Bind setup
+- name: Set DNS Server to host1
+  lineinfile:
+   regexp: '8.8.8.8'
+   insertafter: '^#'
+   line: nameserver 8.8.8.8
+   path: /etc/resolv.conf
+
+- name: Install bind
+  yum:
+    pkg: bind
+    state: installed
+
+- name: Set hostname
+  hostname:
+    name: "{{ hostname }}.{{ domain }}"
+
+- name: Set hostname fact
+  set_fact:
+    ansible_fqdn: "{{ hostname}}.{{domain }}"
+
+- name: Copy named conf file
+  template:
+    src: named.conf.j2
+    dest: /etc/named.conf
+    owner: root
+    group: named
+    mode: 0660
+  notify: Start named
+
+- name: Make named directory
+  file:
+    path: /etc/named
+    state: directory
+    owner: root
+    group: named
+    mode: 0750
+
+- name: Copy named conf local file
+  template:
+    src: named.conf.local.j2
+    dest: /etc/named/named.conf.local
+    owner: root
+    group: named
+    mode: 0640
+  notify: Start named
+
+- name: Make zones Directory
+  file:
+    path: /etc/named/zones
+    state: directory
+    owner: root
+    group: named
+    mode: 0750
+
+- name: Copy forward file
+  template:
+    src: db.forward.j2
+    dest: /etc/named/zones/db.{{ domain }}
+    owner: root
+    group: named
+    mode: 0640
+  notify: Start named
+
+
+- name: Copy reverse file
+  template:
+    src: db.reverse.j2
+    dest: /etc/named/zones/db.{{ reverse_domain }}
+    owner: root
+    group: named
+    mode: 0640
+  notify: Start named
+
+
+- name: check if firewalld is running
+  command: systemctl is-active firewalld
+  register: firewalld_result
+  changed_when: False
+  ignore_errors: True
+
+- name: Open firewall port
+  firewalld:
+   service: dns
+   permanent: true
+   state: enabled
+   immediate: yes
+  when: firewalld_result.stdout == "active"
+
+- name: resolv.conf replace
+  template:
+   src: resolv.j2
+   dest: /etc/resolv.conf
+   owner: root
+   mode: 0640
+  notify: Start named

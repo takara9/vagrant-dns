@@ -1,8 +1,14 @@
 # vagrant-dns
 
 CentOS8でDNSサーバーを構築するVagrant + Ansible playbookです。
+テストや開発のために、プライベートなDNSサーバーが欲しいと言った時に簡単に起動して、すぐに利用でます。
+
 
 ## 起動方法
+
+起動方法は３ステップで起動します。
+仮想サーバーのIPアドレスは、`172.2.1.250` が設定されているので Vagrantfile と
+playbook/bind/templates/named.conf.j2 に設定されたアドレスを変更してください。
 
 ~~~
 $ git clone https://github.com/takara9/vagrant-dns
@@ -10,7 +16,10 @@ $ cd vagrant-dns
 $ vagrant up
 ~~~
 
+## 設定ファイルの使用法
+
 DNSの設定ファイルは、playbook/bind/vars/main.yml です。
+このファイルを編集してDNSの登録を実施します。
 
 ~~~
 .
@@ -37,11 +46,11 @@ DNSの設定ファイルは、playbook/bind/vars/main.yml です。
     └── install_bind.yml
 ~~~
 
+このファイルを編集して、`vagrant up`によって、正引きと逆引きのzoneファイルを自動生成します。
+そして、DNSサーバーまでを起動します。
 
-## 設定ファイルの使用法
 
-このファイルを編集することで、正引きと逆引きのzoneファイルを自動生成します。
-
+設定ファイルの内容と項目の説明を以下に記述します。
 
 ~~~file:playbook/bind/vars/main.yml
 ---
@@ -79,6 +88,7 @@ dns_record:
 1 directory, 3 files
 ~~~
 
+
 ## 動作確認方法
 
 `systemctl status named.service` を実行することで、正常に稼働しているか確認できる。
@@ -105,8 +115,11 @@ Jan 06 13:33:15 server1.takara9.org named[6233]: resolver priming query complete
 
 ## ドメインの正引き
 
-独自のドメインと、インターネット上のドメインの両方をひく事ができる
-仮想サーバーのIPアドレスを指定することで、DNS名のIPアドレスを解決できる。
+出来ることを箇条書きにする。
+
+* 独自のドメインと、インターネット上のドメインの両方を解決可能
+* nslookupで仮想サーバーのIPアドレスを指定してIPアドレスを解決できる。
+* 仮想マシンの内部127.0.0.1、仮想マシンの専用ネットワーク 172.20.1.0/24、仮想マシンのホストから、DNSを利用可能
 
 ~~~
 maho:vagrant-dns maho$ nslookup 
@@ -130,6 +143,8 @@ Address: 172.217.31.131
 
 ## ドメインの逆引き
 
+IPアドレスからFQDNを求めることもできる。
+
 ~~~
 maho:vagrant-dns maho$ nslookup 
 > server 172.20.1.250
@@ -148,3 +163,66 @@ Address:	172.20.1.250#53
 100.1.20.172.in-addr.arpa	name = w1.takara9.org.
 > 
 ~~~
+
+# DNSサーバー内でansible適用方法
+
+サーバーにログインして、直接 ansible-playbookコマンドを実行して設定を更新することもできる
+
+~~~
+maho:vagrant-dns maho$ vagrant ssh
+[vagrant@server1 ~]$ sudo -s
+[root@server1 vagrant]# ansible-playbook -i /vagrant/playbook/bind/hosts /vagrant/playbook/install_bind.yml 
+
+PLAY [Set up Bind DNS] ********************************************************************
+
+TASK [Gathering Facts] ********************************************************************
+ok: [server1]
+
+TASK [bind : Set DNS Server to host1] *****************************************************
+ok: [server1]
+
+TASK [bind : Install bind] ****************************************************************
+ok: [server1]
+
+TASK [bind : Set hostname] ****************************************************************
+ok: [server1]
+
+TASK [bind : Set hostname fact] ***********************************************************
+ok: [server1]
+
+TASK [bind : Copy named conf file] ********************************************************
+ok: [server1]
+
+TASK [bind : Make named directory] ********************************************************
+ok: [server1]
+
+TASK [bind : Copy named conf local file] **************************************************
+ok: [server1]
+
+TASK [bind : Make zones Directory] ********************************************************
+ok: [server1]
+
+TASK [bind : Copy forward file] ***********************************************************
+ok: [server1]
+
+TASK [bind : Copy reverse file] ***********************************************************
+ok: [server1]
+
+TASK [bind : check if firewalld is running] ***********************************************
+ok: [server1]
+
+TASK [bind : Open firewall port] **********************************************************
+ok: [server1]
+
+TASK [bind : resolv.conf replace] *********************************************************
+ok: [server1]
+
+PLAY RECAP ********************************************************************************
+server1        : ok=14   changed=0    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
+
+~~~
+
+
+# 参考URL
+* Ansible で BINDサーバを構築をしてみた,https://note.com/ystk_note/n/n986d7bdd53c4
+* Set up Bind server with Ansible, https://mangolassi.it/topic/12877/set-up-bind-server-with-ansible

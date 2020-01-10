@@ -274,3 +274,4 @@ Address:	127.0.0.1#53
 * Ansible で BINDサーバを構築をしてみた,https://note.com/ystk_note/n/n986d7bdd53c4
 * Set up Bind server with Ansible, https://mangolassi.it/topic/12877/set-up-bind-server-with-ansible
 * bind error creating <zone name>.jnl, https://forums.centos.org/viewtopic.php?t=66096
+* How to Setup DNS Server (Bind) on CentOS8/RHEL8, https://www.linuxtechi.com/setup-bind-server-centos-8-rhel-8/

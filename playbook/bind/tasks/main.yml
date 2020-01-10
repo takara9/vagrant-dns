@@ -6,6 +6,11 @@
    line: nameserver 8.8.8.8
    path: /etc/resolv.conf
 
+- name: change selinux
+  selinux:
+    policy: targeted
+    state: permissive
+
 - name: Install bind
   yum:
     pkg: bind
@@ -32,7 +37,7 @@
   file:
     path: /etc/named
     state: directory
-    owner: root
+    owner: named
     group: named
     mode: 0750
 
@@ -40,7 +45,7 @@
   template:
     src: named.conf.local.j2
     dest: /etc/named/named.conf.local
-    owner: root
+    owner: named
     group: named
     mode: 0640
   notify: Start named
@@ -49,7 +54,7 @@
   file:
     path: /etc/named/zones
     state: directory
-    owner: root
+    owner: named
     group: named
     mode: 0750
 
@@ -57,7 +62,7 @@
   template:
     src: db.forward.j2
     dest: /etc/named/zones/db.{{ domain }}
-    owner: root
+    owner: named
     group: named
     mode: 0640
   notify: Start named
@@ -67,7 +72,7 @@
   template:
     src: db.reverse.j2
     dest: /etc/named/zones/db.{{ reverse_domain }}
-    owner: root
+    owner: named
     group: named
     mode: 0640
   notify: Start named

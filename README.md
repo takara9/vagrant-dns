@@ -223,6 +223,54 @@ server1        : ok=14   changed=0    unreachable=0    failed=0    skipped=0    
 ~~~
 
 
+## ダイナミックDNS
+
+SELinuxのモードはpermissiveに変更してありますから、nsupdateを使ってAレコードの変更ができます。
+
+ホスト test1.takara9.org の登録
+
+~~~
+[root@server1 vagrant]# nsupdate -k /etc/rndc.key 
+> server server1.takara9.org
+> zone takara9.org
+> update add test1.takara9.org. 600 A 172.30.1.136
+> send
+~~~
+
+登録の確認
+
+~~~
+[root@server1 vagrant]# nslookup
+> test1.takara9.org
+Server:		127.0.0.1
+Address:	127.0.0.1#53
+
+Name:	test1.takara9.org
+Address: 172.30.1.136
+~~~
+
+Aレコードの削除
+
+~~~
+[root@server1 vagrant]# nsupdate -k /etc/rndc.key 
+> update del test1.takara9.org
+> send
+~~~
+
+削除の結果確認
+
+~~~
+[root@server1 vagrant]# nslookup
+> test1.takara9.org
+Server:		127.0.0.1
+Address:	127.0.0.1#53
+
+** server can't find test1.takara9.org: NXDOMAIN
+~~~
+
+
+
 # 参考URL
 * Ansible で BINDサーバを構築をしてみた,https://note.com/ystk_note/n/n986d7bdd53c4
 * Set up Bind server with Ansible, https://mangolassi.it/topic/12877/set-up-bind-server-with-ansible
+* bind error creating <zone name>.jnl, https://forums.centos.org/viewtopic.php?t=66096

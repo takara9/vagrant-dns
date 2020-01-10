@@ -7,9 +7,9 @@ $TTL 604800	; 1 week
 				604800     ; minimum (1 weeks)
 )
 @			IN       NS	{{ ansible_fqdn }}.
-{{hostname}}		IN	 A {{ ansible_default_ipv4.address }}
+{{hostname}}		IN	 A {{ ansible_eth1.ipv4.address }}
 {% if dns_record is defined %}
 {% for item in dns_record %}
-{{ item.name }}			IN      {{ item.type }} {{ item.ipaddress }}
+{{ item.name }}		IN      {{ item.type }} {{ item.ipaddress }}
 {% endfor %}
 {% endif %}

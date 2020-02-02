@@ -1,0 +1,7 @@
+---
+# handlers file for Bind setup
+- name: Start named
+  systemd:
+    name: named.service
+    state: started
+  become: yes

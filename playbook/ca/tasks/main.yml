@@ -1,0 +1,82 @@
+#tasks file for In House CA setup
+
+- name: Install openssl
+  yum:
+    pkg: openssl
+    state: installed
+
+- name: Make CA directory
+  file:
+    path: "/{{ ca_home }}"
+    state: directory
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"
+    mode: 0750
+
+- name: Make CA certs directory
+  file:
+    path: "/{{ ca_home }}/certs"
+    state: directory
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"
+    mode: 0750
+
+- name: Make CA private directory
+  file:
+    path: "/{{ ca_home }}/private"
+    state: directory
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"
+    mode: g-rwx,o-rwx
+
+- name: Make CA newcerts directory
+  file:
+    path: "/{{ ca_home }}/newcerts"    
+    state: directory
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"
+    mode: 0750
+
+- name: Touch the same file, but add/remove some permissions
+  file:
+    path: "/{{ ca_home }}/index.txt"
+    state: touch
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"    
+    mode: u+rw,g-wx,o-rwx
+
+- name: Copy CA config file
+  template:
+    src: serial.j2
+    dest: "{{ ca_home }}/serial"
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"    
+    mode: 0660
+
+
+- name: Copy CA config file
+  template:
+    src: openssl.cnf.j2
+    dest: "{{ ca_home }}/openssl.cnf"
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"    
+    mode: 0660
+
+- name: set environment file
+  template:
+    src: environment.j2
+    dest: /etc/environment
+    owner: root
+    group: root
+    mode: 0664
+
+- name: copy README.txt
+  template:
+    src: README.j2
+    dest: "/home/vagrant/README.txt"
+    owner: "{{ ca_user }}"
+    group: "{{ ca_group }}"    
+    mode: 0664
+
+
+

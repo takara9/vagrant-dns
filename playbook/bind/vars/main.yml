@@ -1,13 +1,17 @@
 ---
 hostname: server1
 
-domain: takara9.org
+domain: mahot.org
 reverse_domain: 1.20.172.in-addr.arpa.
 
 dns_record:
- - name: w1
+ - name: www
    type: A
    ipaddress: 172.20.1.100
- - name: w2
+ - name: dev
    type: A
    ipaddress: 172.20.1.101
+ - name: test
+   type: A
+   ipaddress: 172.20.1.102
+   

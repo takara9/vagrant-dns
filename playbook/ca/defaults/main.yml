@@ -1,0 +1,6 @@
+---
+# vars file for CA setup
+ca_home: /CA
+ca_user: vagrant
+ca_group: vagrant
+

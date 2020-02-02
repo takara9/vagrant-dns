@@ -56,14 +56,14 @@ DNSの設定ファイルは、playbook/bind/vars/main.yml です。
 ---
 hostname: server1
 
-domain: takara9.org
+domain: mahot.org
 reverse_domain: 1.20.172.in-addr.arpa.
 
 dns_record:
- - name: w1
+ - name: www
    type: A
    ipaddress: 172.20.1.100
- - name: w2
+ - name: dev
    type: A
    ipaddress: 172.20.1.101
 ~~~
@@ -83,7 +83,7 @@ dns_record:
 |-- named.conf.local
 `-- zones
     |-- db.1.20.172.in-addr.arpa.
-    `-- db.takara9.org
+    `-- db.mahot.org
 
 1 directory, 3 files
 ~~~
@@ -126,12 +126,14 @@ maho:vagrant-dns maho$ nslookup
 > server 172.20.1.250
 Default server: 172.20.1.250
 Address: 172.20.1.250#53
-> w1.takara9.org
+
+> www.mahot.org
 Server:		172.20.1.250
 Address:	172.20.1.250#53
 
-Name:	w1.takara9.org
+Name:	www.mahot.org
 Address: 172.20.1.100
+
 > www.google.co.jp
 Server:		172.20.1.250
 Address:	172.20.1.250#53
@@ -150,17 +152,17 @@ maho:vagrant-dns maho$ nslookup
 > server 172.20.1.250
 Default server: 172.20.1.250
 Address: 172.20.1.250#53
-> w1.takara9.org
+> www.mahot.org
 Server:		172.20.1.250
 Address:	172.20.1.250#53
 
-Name:	w1.takara9.org
+Name:	www.mahot.org
 Address: 172.20.1.100
 > 172.20.1.100
 Server:		172.20.1.250
 Address:	172.20.1.250#53
 
-100.1.20.172.in-addr.arpa	name = w1.takara9.org.
+100.1.20.172.in-addr.arpa	name = www.mahot.org.
 > 
 ~~~
 
@@ -227,13 +229,13 @@ server1        : ok=14   changed=0    unreachable=0    failed=0    skipped=0    
 
 SELinuxのモードはpermissiveに変更してありますから、nsupdateを使ってAレコードの変更ができます。
 
-ホスト test1.takara9.org の登録
+ホスト test1.mahot.org の登録
 
 ~~~
 [root@server1 vagrant]# nsupdate -k /etc/rndc.key 
-> server server1.takara9.org
-> zone takara9.org
-> update add test1.takara9.org. 600 A 172.30.1.136
+> server server1.mahot.org
+> zone mahot.org
+> update add test1.mahot.org. 600 A 172.30.1.136
 > send
 ~~~
 
@@ -241,11 +243,11 @@ SELinuxのモードはpermissiveに変更してありますから、nsupdateを�
 
 ~~~
 [root@server1 vagrant]# nslookup
-> test1.takara9.org
+> test1.mahot.org
 Server:		127.0.0.1
 Address:	127.0.0.1#53
 
-Name:	test1.takara9.org
+Name:	test1.mahot.org
 Address: 172.30.1.136
 ~~~
 
@@ -253,7 +255,7 @@ Aレコードの削除
 
 ~~~
 [root@server1 vagrant]# nsupdate -k /etc/rndc.key 
-> update del test1.takara9.org
+> update del test1.mahot.org
 > send
 ~~~
 
@@ -261,11 +263,11 @@ Aレコードの削除
 
 ~~~
 [root@server1 vagrant]# nslookup
-> test1.takara9.org
+> test1.mahot.org
 Server:		127.0.0.1
 Address:	127.0.0.1#53
 
-** server can't find test1.takara9.org: NXDOMAIN
+** server can't find test1.mahot.org: NXDOMAIN
 ~~~
 
 

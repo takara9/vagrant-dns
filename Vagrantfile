@@ -19,7 +19,7 @@ Vagrant.configure("2") do |config|
     
     machine.vm.provision "ansible_local" do |ansible|
       ansible.playbook       = "playbook/install_bind.yml"
-      ansible.version        = "2.8.5"
+      ansible.version        = "latest"
       ansible.verbose        = false
       ansible.install        = true
       ansible.limit          = "server1"
